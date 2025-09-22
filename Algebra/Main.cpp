@@ -154,12 +154,12 @@ int main()
 
 		DrawGrid(20, 5.0f);
 
-		for (const Step& s : steps)
+		for (int step = 0; step < steps.size(); step++)
 		{
-			Vector3 center = { 0.0f, s.bottomY + s.height / 2.0f, 0.0f };
+			Vector3 center = { 0.0f, steps[step].bottomY + steps[step].height / 2.0f, 0.0f };
 			Color col;
 
-			if (s.inverted)
+			if (steps[step].inverted)
 			{
 				col = BLUE;
 			}
@@ -168,8 +168,8 @@ int main()
 				col = RED;
 			}
 
-			DrawCube(center, s.side, s.height, s.side, col);
-			DrawCubeWires(center, s.side, s.height, s.side, WHITE);
+			DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
+			DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
 		}
 
 		EndMode3D();
@@ -201,15 +201,15 @@ void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, floa
 void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTopY, const std::vector<Step>& baseSteps, std::vector<Step>& steps)
 {
 	float topY = currentTopY; //altura donde empieza el primer espejo
-	int timesMirrored = 2;
+	int timesMirrored = 1;
 	bool inverted = false;
-	
-	for (int m = 0; m < mirrors; m++)
+
+	for (int m = 1; m <= mirrors; m++)
 	{
 		if (!inverted)
 		{
 			//recorrer hacia arriba
-			for (int k = stepsNum - timesMirrored; k >= 0; k--)
+			for (int k = (stepsNum - 2); k >= m / 2; k--)
 			{
 				const Step& orig = baseSteps[k];
 				float bottomY = topY;
@@ -220,7 +220,7 @@ void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTop
 		else
 		{
 			// recorrer hacia abajo (espejado)
-			for (int k = 0; k <= stepsNum - timesMirrored; k++)
+			for (int k = m / 2; k <= stepsNum - 1; k++)
 			{
 				const Step& orig = baseSteps[k];
 				float bottomY = topY;
@@ -240,10 +240,10 @@ void calculateGeometry(const std::vector<Step>& steps)
 	double totalArea = 0.0;
 	double totalVolume = 0.0;
 
-	for (const Step& s : steps)
+	for (int step = 0; step < steps.size(); step++)
 	{
-		double side = s.side;
-		double height = s.height;
+		double side = steps[step].side;
+		double height = steps[step].height;
 
 		double perimeterTopFace = 4.0 * side;
 		double perimeterBtmFace = 4.0 * side;
@@ -261,7 +261,7 @@ void calculateGeometry(const std::vector<Step>& steps)
 	}
 
 	std::cout << "\n Geometry of the figure: \n";
-	std::cout << "Total perimeter (sum of perimeters of all faces): " << totalPerimeter << "\n";
-	std::cout << "Total surface area (sum of areas of all faces): " << totalArea << "\n";
-	std::cout << "Total volume: " << totalVolume << "\n";
+	std::cout << "Total perimeter (sum of perimeters of all faces): " << totalPerimeter << " cm" << "\n";
+	std::cout << "Total surface area (sum of areas of all faces): " << totalArea << " cm2" << "\n";
+	std::cout << "Total volume: " << totalVolume << " cm3" << "\n";
 }
