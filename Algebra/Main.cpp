@@ -70,9 +70,18 @@ int main()
 	float normalizeB = sqrtf(vectorB.x * vectorB.x + vectorB.y * vectorB.y + vectorB.z * vectorB.z);
 	float normalizeC = sqrtf(vectorC.x * vectorC.x + vectorC.y * vectorC.y + vectorC.z * vectorC.z);
 
-	if (normalizeA == 0) normalizeA = 1.0f;
-	if (normalizeB == 0) normalizeB = 1.0f;
-	if (normalizeC == 0) normalizeC = 1.0f;
+	if (normalizeA == 0)
+	{
+		normalizeA = 1.0f;
+	}
+	if (normalizeB == 0)
+	{
+		normalizeB = 1.0f;
+	}
+	if (normalizeC == 0) 
+	{
+		normalizeC = 1.0f;
+	}
 
 	vectorA.x /= normalizeA; vectorA.y /= normalizeA; vectorA.z /= normalizeA;
 	vectorB.x /= normalizeB; vectorB.y /= normalizeB; vectorB.z /= normalizeB;
