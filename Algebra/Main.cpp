@@ -24,9 +24,9 @@ void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, floa
 void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTopY, const std::vector<Step>& baseSteps, std::vector<Step>& steps);
 void calculateGeometry(const std::vector<Step>& steps);
 
-int main()
+void main()
 {
-	srand((unsigned)time(nullptr));
+	srand (time(nullptr));
 
 	float currentTopY = 0;
 
@@ -203,8 +203,6 @@ int main()
 	CloseWindow();
 
 	calculateGeometry(steps);
-
-	return 0;
 }
 
 void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, float stepHeight, std::vector<Step>& steps)
