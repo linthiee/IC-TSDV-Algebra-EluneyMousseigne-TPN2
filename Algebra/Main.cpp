@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include "Vectors.h"
 #include <vector>
-#include <algorithm>
 
 struct Step
 {
