@@ -78,27 +78,42 @@ int main()
 	{
 		normalizeB = 1.0f;
 	}
-	if (normalizeC == 0) 
+	if (normalizeC == 0)
 	{
 		normalizeC = 1.0f;
 	}
 
-	vectorA.x /= normalizeA; vectorA.y /= normalizeA; vectorA.z /= normalizeA;
-	vectorB.x /= normalizeB; vectorB.y /= normalizeB; vectorB.z /= normalizeB;
-	vectorC.x /= normalizeC; vectorC.y /= normalizeC; vectorC.z /= normalizeC;
+	vectorA.x /= normalizeA; 
+	vectorA.y /= normalizeA;
+	vectorA.z /= normalizeA;
+
+	vectorB.x /= normalizeB;
+	vectorB.y /= normalizeB; 
+	vectorB.z /= normalizeB;
+
+	vectorC.x /= normalizeC; 
+	vectorC.y /= normalizeC;
+	vectorC.z /= normalizeC;
 
 	float magnitude = (float)(rand() % magnitudeRange + magnitudeMin);
 
-	vectorA.x *= magnitude; vectorA.y *= magnitude; vectorA.z *= magnitude;
-	vectorB.x *= magnitude; vectorB.y *= magnitude; vectorB.z *= magnitude;
+	vectorA.x *= magnitude;
+	vectorA.y *= magnitude; 
+	vectorA.z *= magnitude;
 
-	vectorC.x *= (magnitude / (float)n);
-	vectorC.y *= (magnitude / (float)n);
-	vectorC.z *= (magnitude / (float)n);
+	vectorB.x *= magnitude;
+	vectorB.y *= magnitude;
+	vectorB.z *= magnitude;
+
+	float magnitudeC = ((1.0f / (float)n) * magnitude);
+
+	vectorC.x = magnitudeC;
+	vectorC.y = magnitudeC;
+	vectorC.z = magnitudeC;
 
 	int stepsNum = n;
-	float stepHeight = sqrtf(vectorC.x * vectorC.x + vectorC.y * vectorC.y + vectorC.z * vectorC.z);
-	float baseSide = magnitude * 2.0f; // lado de la base
+	float stepHeight = magnitudeC;
+	float baseSide = magnitudeC * 10.0f; // lado de la base
 
 	int mirrors = 0;
 	std::cout << "Enter how many times you want your pyramid mirrored: ";
