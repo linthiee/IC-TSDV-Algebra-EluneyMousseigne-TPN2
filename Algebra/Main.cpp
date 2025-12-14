@@ -26,7 +26,7 @@ void calculateGeometry(const std::vector<Step>& steps);
 
 void main()
 {
-	srand (time(nullptr));
+	srand(time(nullptr));
 
 	float currentTopY = 0;
 
@@ -82,22 +82,22 @@ void main()
 		normalizeC = 1.0f;
 	}
 
-	vectorA.x /= normalizeA; 
+	vectorA.x /= normalizeA;
 	vectorA.y /= normalizeA;
 	vectorA.z /= normalizeA;
 
 	vectorB.x /= normalizeB;
-	vectorB.y /= normalizeB; 
+	vectorB.y /= normalizeB;
 	vectorB.z /= normalizeB;
 
-	vectorC.x /= normalizeC; 
+	vectorC.x /= normalizeC;
 	vectorC.y /= normalizeC;
 	vectorC.z /= normalizeC;
 
 	float magnitude = (float)(rand() % magnitudeRange + magnitudeMin);
 
 	vectorA.x *= magnitude;
-	vectorA.y *= magnitude; 
+	vectorA.y *= magnitude;
 	vectorA.z *= magnitude;
 
 	vectorB.x *= magnitude;
@@ -106,9 +106,9 @@ void main()
 
 	float magnitudeC = ((1.0f / (float)n) * magnitude);
 
-	vectorC.x = magnitudeC;
-	vectorC.y = magnitudeC;
-	vectorC.z = magnitudeC;
+	vectorC.x *= magnitudeC;
+	vectorC.y *= magnitudeC;
+	vectorC.z *= magnitudeC;
 
 	int stepsNum = n;
 	float stepHeight = magnitudeC;
@@ -221,7 +221,7 @@ void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, floa
 
 void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTopY, const std::vector<Step>& baseSteps, std::vector<Step>& steps)
 {
-	float topY = currentTopY; //altura donde empieza el primer espejo
+	float topY = currentTopY;
 	int timesMirrored = 1;
 	bool inverted = false;
 
@@ -229,10 +229,9 @@ void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTop
 	{
 		if (!inverted)
 		{
-			//recorrer hacia arriba
-			for (int k = (stepsNum - 2); k >= m / 2; k--)
+			for (int k = stepsNum - 2; k >= 0; k--)
 			{
-				const Step& orig = baseSteps[k];
+				Step orig = baseSteps[k];
 				float bottomY = topY;
 				steps.push_back({ orig.side, bottomY, stepHeight, !inverted });
 				topY += stepHeight;
@@ -240,10 +239,9 @@ void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTop
 		}
 		else
 		{
-			// recorrer hacia abajo (espejado)
-			for (int k = m / 2; k <= stepsNum - 1; k++)
+			for (int k = 1; k <= stepsNum - 1; k++)
 			{
-				const Step& orig = baseSteps[k];
+				Step orig = baseSteps[k];
 				float bottomY = topY;
 				steps.push_back({ orig.side, bottomY, stepHeight, !inverted });
 				topY += stepHeight;
