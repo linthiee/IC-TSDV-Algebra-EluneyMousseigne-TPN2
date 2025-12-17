@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "raylib.h"
+#include "raymath.h"
 #include "Vectors.h"
 #include <vector>
 
@@ -17,6 +18,10 @@ const int magnitudeMax = 10;
 const int magnitudeMin = 5;
 const int magnitudeRange = (magnitudeMax - magnitudeMin + 1);
 
+const int minAngle = 1;
+const int maxAngle = 360;
+const int angleRange = (maxAngle - minAngle + 1);
+
 const int screenWidth = 1080;
 const int screenHeight = 625;
 
@@ -29,6 +34,8 @@ void main()
 	srand(time(nullptr));
 
 	float currentTopY = 0;
+
+	float angle = rand() % (angleRange + minAngle);
 
 	Camera3D camera = { 0 };
 
@@ -44,9 +51,14 @@ void main()
 
 	float cameraSpeed = 0.2f;
 
-	vectorA.x = (float)(rand() % magnitudeRange + magnitudeMin);
-	vectorA.y = (float)(rand() % magnitudeRange + magnitudeMin);
-	vectorA.z = (float)(rand() % magnitudeRange + magnitudeMin);
+	float magnitude = (float)(rand() % magnitudeRange + magnitudeMin);
+
+
+	vectorA.x = magnitude + cos(DEG2RAD * angle);
+	vectorA.y = magnitude;
+	vectorA.z = magnitude + sin(DEG2RAD * angle);
+
+	Matrix matRotA = MatrixRotate(vectorA, angle * DEG2RAD);
 
 	vectorB.y = -vectorA.x;
 	vectorB.x = vectorA.y;
@@ -94,16 +106,6 @@ void main()
 	vectorC.y /= normalizeC;
 	vectorC.z /= normalizeC;
 
-	float magnitude = (float)(rand() % magnitudeRange + magnitudeMin);
-
-	vectorA.x *= magnitude;
-	vectorA.y *= magnitude;
-	vectorA.z *= magnitude;
-
-	vectorB.x *= magnitude;
-	vectorB.y *= magnitude;
-	vectorB.z *= magnitude;
-
 	float magnitudeC = ((1.0f / (float)n) * magnitude);
 
 	vectorC.x *= magnitudeC;
@@ -138,7 +140,7 @@ void main()
 
 	//currentTopY altura total de la piramide original
 	currentTopY = stepsNum * stepHeight;
-	buildMirrored(mirrors, stepsNum, stepHeight, currentTopY, baseSteps, steps);
+	//buildMirrored(mirrors, stepsNum, stepHeight, currentTopY, baseSteps, steps);
 
 	while (!WindowShouldClose())
 	{
