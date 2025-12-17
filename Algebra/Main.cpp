@@ -222,7 +222,6 @@ void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, floa
 void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTopY, const std::vector<Step>& baseSteps, std::vector<Step>& steps)
 {
 	float topY = currentTopY;
-	int timesMirrored = 1;
 	bool inverted = false;
 
 	for (int m = 1; m <= mirrors; m++)
@@ -249,7 +248,6 @@ void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTop
 		}
 
 		inverted = !inverted;
-		timesMirrored++;
 	}
 }
 
