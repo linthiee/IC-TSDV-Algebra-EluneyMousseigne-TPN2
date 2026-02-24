@@ -151,7 +151,7 @@ void main()
 
 		for (int step = 0; step < steps.size(); step++)
 		{
-			//Vector3 center = { vectorC.x, vectorC.y,  vectorC.z };
+			Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step };
 			Color col;
 
 			if (steps[step].inverted)
@@ -166,11 +166,15 @@ void main()
 			//DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
 			//DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
 
+			DrawLine3D(center, { vectorC.x * step, steps[step].side, vectorC.z * step }, YELLOW);
+			DrawLine3D(center, { vectorC.x * step, -steps[step].side, vectorC.z * step }, YELLOW);
+			DrawLine3D({ vectorC.x * step, steps[step].side, vectorC.z * step }, { steps[step].height * step, vectorC.y * step,vectorC.z * step } , YELLOW);
+
 			DrawLine3D(Vector3Zero(), vectorA, RED);
 			DrawLine3D(Vector3Zero(), vectorB, GREEN);
 			DrawLine3D(Vector3Zero(), vectorC, BLUE);
 
-			//DrawSphere(center, 20.0f, MAGENTA);
+			DrawSphere(center, 0.1f, MAGENTA);
 
 		}
 
