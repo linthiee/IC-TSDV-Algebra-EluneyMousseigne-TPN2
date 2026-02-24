@@ -31,6 +31,10 @@ float getVectorMagnitude(Vector3 vector);
 void normalizeVector(Vector3& vector);
 void scaleVector(Vector3& vector, float scalar);
 
+void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step);
+
+Vector3 operator+(Vector3& vector1, Vector3& vector2);
+
 void main()
 {
 	srand(time(nullptr));
@@ -69,7 +73,7 @@ void main()
 
 	if (n <= 0)
 	{
-		n = 1;
+		n = 5;
 	}
 
 	vectorC = Vector3CrossProduct(vectorA, vectorB);
@@ -84,7 +88,7 @@ void main()
 
 	int stepsNum = n;
 	float stepHeight = magnitudeC;
-	float baseSide = magnitudeC / 10.0f; // lado de la base
+	float baseSide = magnitudeC * 2;// lado de la base
 
 	int mirrors = 0;
 	std::cout << "Enter how many times you want your pyramid mirrored: ";
@@ -151,7 +155,6 @@ void main()
 
 		for (int step = 0; step < steps.size(); step++)
 		{
-			Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step };
 			Color col;
 
 			if (steps[step].inverted)
@@ -163,19 +166,11 @@ void main()
 				col = RED;
 			}
 
-			//DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
-			//DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
-
-			DrawLine3D(center, { vectorC.x * step, steps[step].side, vectorC.z * step }, YELLOW);
-			DrawLine3D(center, { vectorC.x * step, -steps[step].side, vectorC.z * step }, YELLOW);
-			DrawLine3D({ vectorC.x * step, steps[step].side, vectorC.z * step }, { steps[step].height * step, vectorC.y * step,vectorC.z * step } , YELLOW);
+			drawStep(vectorA, vectorB, vectorC, steps[step].side, step);
 
 			DrawLine3D(Vector3Zero(), vectorA, RED);
 			DrawLine3D(Vector3Zero(), vectorB, GREEN);
 			DrawLine3D(Vector3Zero(), vectorC, BLUE);
-
-			DrawSphere(center, 0.1f, MAGENTA);
-
 		}
 
 		EndMode3D();
@@ -290,4 +285,41 @@ void scaleVector(Vector3& vector, float scalar)
 	vector.x *= scalar;
 	vector.y *= scalar;
 	vector.z *= scalar;
+}
+
+void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step)
+{
+	Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step };
+
+	Vector3 getNormalizedVectorA = vectorA;
+	normalizeVector(getNormalizedVectorA);
+	scaleVector(getNormalizedVectorA, stepSide);
+
+	Vector3 getNormalizedVectorB = vectorB;
+	normalizeVector(getNormalizedVectorB);
+	scaleVector(getNormalizedVectorB, stepSide);
+
+	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB, YELLOW);
+	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+
+	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB + vectorC, YELLOW);
+	DrawLine3D(center + getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB + vectorC, YELLOW);
+	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA - getNormalizedVectorB + vectorC, YELLOW);
+	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB + vectorC, YELLOW);
+
+	DrawSphere(center, 0.1f, MAGENTA);
+
+	center = { vectorC.x * (step + 1), vectorC.y * (step + 1), vectorC.z * (step + 1) };
+
+	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB, YELLOW);
+	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+}
+
+Vector3 operator+(Vector3& vector1, Vector3& vector2)
+{
+	return { vector1.x + vector2.x, vector1.y + vector2.y, vector1.z + vector2.z };
 }
