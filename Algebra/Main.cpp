@@ -14,9 +14,7 @@ struct Step
 	bool inverted;
 };
 
-const int magnitudeMax = 10;
-const int magnitudeMin = -magnitudeMax;
-const int magnitudeRange = (magnitudeMax - magnitudeMin + 1);
+const int magnitudeRange = 20;
 
 const int minAngle = 1;
 const int maxAngle = 360;
@@ -30,6 +28,8 @@ void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTop
 void calculateGeometry(const std::vector<Step>& steps);
 
 float getVectorMagnitude(Vector3 vector);
+void normalizeVector(Vector3& vector);
+void scaleVector(Vector3& vector, float scalar);
 
 void main()
 {
@@ -53,9 +53,9 @@ void main()
 
 	float cameraSpeed = 0.2f;
 
-	vectorA.x = (float)(rand() % magnitudeRange + magnitudeMin);
-	vectorA.y = (float)(rand() % magnitudeRange + magnitudeMin);
-	vectorA.z = (float)(rand() % magnitudeRange + magnitudeMin);
+	vectorA.x = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
+	vectorA.y = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
+	vectorA.z = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
 
 	float magnitude = getVectorMagnitude(vectorA);
 
@@ -72,48 +72,19 @@ void main()
 		n = 1;
 	}
 
-	vectorC.x = vectorA.y * vectorB.z - vectorA.z * vectorB.y;
-	vectorC.y = vectorA.z * vectorB.x - vectorA.x * vectorB.z;
-	vectorC.z = vectorA.x * vectorB.y - vectorA.y * vectorB.x;
+	vectorC = Vector3CrossProduct(vectorA, vectorB);
 
-	float normalizeA = sqrtf(vectorA.x * vectorA.x + vectorA.y * vectorA.y + vectorA.z * vectorA.z);
-	float normalizeB = sqrtf(vectorB.x * vectorB.x + vectorB.y * vectorB.y + vectorB.z * vectorB.z);
-	float normalizeC = sqrtf(vectorC.x * vectorC.x + vectorC.y * vectorC.y + vectorC.z * vectorC.z);
-
-	if (normalizeA == 0)
-	{
-		normalizeA = 1.0f;
-	}
-	if (normalizeB == 0)
-	{
-		normalizeB = 1.0f;
-	}
-	if (normalizeC == 0)
-	{
-		normalizeC = 1.0f;
-	}
-
-	vectorA.x /= normalizeA;
-	vectorA.y /= normalizeA;
-	vectorA.z /= normalizeA;
-
-	vectorB.x /= normalizeB;
-	vectorB.y /= normalizeB;
-	vectorB.z /= normalizeB;
-
-	vectorC.x /= normalizeC;
-	vectorC.y /= normalizeC;
-	vectorC.z /= normalizeC;
+	normalizeVector(vectorB);
+	normalizeVector(vectorC);
 
 	float magnitudeC = ((1.0f / (float)n) * magnitude);
 
-	vectorC.x *= magnitudeC;
-	vectorC.y *= magnitudeC;
-	vectorC.z *= magnitudeC;
+	scaleVector(vectorB, magnitude);
+	scaleVector(vectorC, magnitudeC);
 
 	int stepsNum = n;
 	float stepHeight = magnitudeC;
-	float baseSide = magnitudeC * 10.0f; // lado de la base
+	float baseSide = magnitudeC / 10.0f; // lado de la base
 
 	int mirrors = 0;
 	std::cout << "Enter how many times you want your pyramid mirrored: ";
@@ -180,7 +151,7 @@ void main()
 
 		for (int step = 0; step < steps.size(); step++)
 		{
-			Vector3 center = { 0.0f, steps[step].bottomY + steps[step].height / 2.0f, 0.0f };
+			//Vector3 center = { vectorC.x, vectorC.y,  vectorC.z };
 			Color col;
 
 			if (steps[step].inverted)
@@ -194,9 +165,13 @@ void main()
 
 			//DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
 			//DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
+
 			DrawLine3D(Vector3Zero(), vectorA, RED);
 			DrawLine3D(Vector3Zero(), vectorB, GREEN);
 			DrawLine3D(Vector3Zero(), vectorC, BLUE);
+
+			//DrawSphere(center, 20.0f, MAGENTA);
+
 		}
 
 		EndMode3D();
@@ -290,4 +265,25 @@ void calculateGeometry(const std::vector<Step>& steps)
 float getVectorMagnitude(Vector3 vector)
 {
 	return (sqrt((vector.x * vector.x) + (vector.y * vector.y) + (vector.z * vector.z)));
+}
+
+void normalizeVector(Vector3& vector)
+{
+	float vectorMagnitude = getVectorMagnitude(vector);
+
+	if (vectorMagnitude == 0)
+	{
+		vectorMagnitude = 1.0f;
+	}
+
+	vector.x /= vectorMagnitude;
+	vector.y /= vectorMagnitude;
+	vector.z /= vectorMagnitude;
+}
+
+void scaleVector(Vector3& vector, float scalar)
+{
+	vector.x *= scalar;
+	vector.y *= scalar;
+	vector.z *= scalar;
 }
