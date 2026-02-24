@@ -31,7 +31,8 @@ float getVectorMagnitude(Vector3 vector);
 void normalizeVector(Vector3& vector);
 void scaleVector(Vector3& vector, float scalar);
 
-void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step);
+void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step, Color col);
+void fillStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, Color col);
 
 Vector3 operator+(Vector3& vector1, Vector3& vector2);
 
@@ -69,11 +70,11 @@ void main()
 
 	int n = 0;
 	std::cout << "Enter N (number of steps): ";
-	//std::cin >> n;
+	std::cin >> n;
 
 	if (n <= 0)
 	{
-		n = 5;
+		n = 1;
 	}
 
 	vectorC = Vector3CrossProduct(vectorA, vectorB);
@@ -92,7 +93,7 @@ void main()
 
 	int mirrors = 0;
 	std::cout << "Enter how many times you want your pyramid mirrored: ";
-	//std::cin >> mirrors;
+	std::cin >> mirrors;
 
 	if (mirrors < 0)
 	{
@@ -114,7 +115,7 @@ void main()
 
 	//currentTopY altura total de la piramide original
 	currentTopY = stepsNum * stepHeight;
-	//buildMirrored(mirrors, stepsNum, stepHeight, currentTopY, baseSteps, steps);
+	buildMirrored(mirrors, stepsNum, stepHeight, currentTopY, baseSteps, steps);
 
 	while (!WindowShouldClose())
 	{
@@ -166,7 +167,7 @@ void main()
 				col = RED;
 			}
 
-			drawStep(vectorA, vectorB, vectorC, steps[step].side, step);
+			drawStep(vectorA, vectorB, vectorC, steps[step].side, step, col);
 
 			DrawLine3D(Vector3Zero(), vectorA, RED);
 			DrawLine3D(Vector3Zero(), vectorB, GREEN);
@@ -287,7 +288,7 @@ void scaleVector(Vector3& vector, float scalar)
 	vector.z *= scalar;
 }
 
-void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step)
+void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step, Color col)
 {
 	Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step };
 
@@ -299,24 +300,57 @@ void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide,
 	normalizeVector(getNormalizedVectorB);
 	scaleVector(getNormalizedVectorB, stepSide);
 
-	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB, YELLOW);
-	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
-	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB, YELLOW);
-	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	Vector3 corner1 = center - getNormalizedVectorA + getNormalizedVectorB;
+	Vector3 corner2 = center + getNormalizedVectorA + getNormalizedVectorB;
+	Vector3 corner3 = center - getNormalizedVectorA - getNormalizedVectorB;
+	Vector3 corner4 = center + getNormalizedVectorA - getNormalizedVectorB;
 
-	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB + vectorC, YELLOW);
-	DrawLine3D(center + getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB + vectorC, YELLOW);
-	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA - getNormalizedVectorB + vectorC, YELLOW);
-	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB + vectorC, YELLOW);
+	DrawLine3D(corner3, corner4, MAGENTA);
+	DrawLine3D(corner4, corner2, MAGENTA);
+	DrawLine3D(corner3, corner1, MAGENTA);
+	DrawLine3D(corner1, corner2, MAGENTA);
+
+	DrawLine3D(corner1, corner1 + vectorC, MAGENTA);
+	DrawLine3D(corner2, corner2 + vectorC, MAGENTA);
+	DrawLine3D(corner3, corner3 + vectorC, MAGENTA);
+	DrawLine3D(corner4, corner4 + vectorC, MAGENTA);
 
 	DrawSphere(center, 0.1f, MAGENTA);
 
+	DrawSphere(corner1, 0.1f, GREEN);
+	DrawSphere(corner2, 0.1f, BLUE);
+	DrawSphere(corner3, 0.1f, RED);
+	DrawSphere(corner4, 0.1f, YELLOW);
+
+	DrawTriangle3D(corner1, corner2, corner3, col);
+	DrawTriangle3D(corner2, corner4, corner3, col);
+
 	center = { vectorC.x * (step + 1), vectorC.y * (step + 1), vectorC.z * (step + 1) };
 
-	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA - getNormalizedVectorB, YELLOW);
-	DrawLine3D(center + getNormalizedVectorA - getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
-	DrawLine3D(center - getNormalizedVectorA - getNormalizedVectorB, center - getNormalizedVectorA + getNormalizedVectorB, YELLOW);
-	DrawLine3D(center - getNormalizedVectorA + getNormalizedVectorB, center + getNormalizedVectorA + getNormalizedVectorB, YELLOW);
+	Vector3 corner5 = center - getNormalizedVectorA + getNormalizedVectorB;
+	Vector3 corner6 = center + getNormalizedVectorA + getNormalizedVectorB;
+	Vector3 corner7 = center - getNormalizedVectorA - getNormalizedVectorB;
+	Vector3 corner8 = center + getNormalizedVectorA - getNormalizedVectorB;
+
+	DrawLine3D(corner7, corner8, MAGENTA);
+	DrawLine3D(corner8, corner6, MAGENTA);
+	DrawLine3D(corner7, corner5, MAGENTA);
+	DrawLine3D(corner5, corner6, MAGENTA);
+
+	DrawTriangle3D(corner7, corner6, corner5, col);
+	DrawTriangle3D(corner7, corner8, corner6, col);
+	DrawTriangle3D(corner3, corner4, corner7, col);
+	DrawTriangle3D(corner8, corner7, corner4, col);
+	DrawTriangle3D(corner2, corner1, corner6, col);
+	DrawTriangle3D(corner1, corner5, corner6, col);
+	DrawTriangle3D(corner7, corner5, corner3, col);
+	DrawTriangle3D(corner1, corner3, corner5, col);
+	DrawTriangle3D(corner2, corner6, corner4, col);
+	DrawTriangle3D(corner4, corner6, corner8, col);
+}
+
+void fillStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, Color col)
+{
 }
 
 Vector3 operator+(Vector3& vector1, Vector3& vector2)
