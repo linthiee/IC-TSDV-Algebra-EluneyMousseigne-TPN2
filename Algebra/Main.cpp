@@ -15,7 +15,7 @@ struct Step
 };
 
 const int magnitudeMax = 10;
-const int magnitudeMin = 5;
+const int magnitudeMin = -magnitudeMax;
 const int magnitudeRange = (magnitudeMax - magnitudeMin + 1);
 
 const int minAngle = 1;
@@ -28,6 +28,8 @@ const int screenHeight = 625;
 void buildPyramidRecursive(int currentStep, int totalSteps, float baseSide, float stepHeight, std::vector<Step>& steps);
 void buildMirrored(int mirrors, int stepsNum, float stepHeight, float currentTopY, const std::vector<Step>& baseSteps, std::vector<Step>& steps);
 void calculateGeometry(const std::vector<Step>& steps);
+
+float getVectorMagnitude(Vector3 vector);
 
 void main()
 {
@@ -51,14 +53,11 @@ void main()
 
 	float cameraSpeed = 0.2f;
 
-	float magnitude = (float)(rand() % magnitudeRange + magnitudeMin);
+	vectorA.x = (float)(rand() % magnitudeRange + magnitudeMin);
+	vectorA.y = (float)(rand() % magnitudeRange + magnitudeMin);
+	vectorA.z = (float)(rand() % magnitudeRange + magnitudeMin);
 
-
-	vectorA.x = magnitude + cos(DEG2RAD * angle);
-	vectorA.y = magnitude;
-	vectorA.z = magnitude + sin(DEG2RAD * angle);
-
-	Matrix matRotA = MatrixRotate(vectorA, angle * DEG2RAD);
+	float magnitude = getVectorMagnitude(vectorA);
 
 	vectorB.y = -vectorA.x;
 	vectorB.x = vectorA.y;
@@ -66,7 +65,7 @@ void main()
 
 	int n = 0;
 	std::cout << "Enter N (number of steps): ";
-	std::cin >> n;
+	//std::cin >> n;
 
 	if (n <= 0)
 	{
@@ -118,7 +117,7 @@ void main()
 
 	int mirrors = 0;
 	std::cout << "Enter how many times you want your pyramid mirrored: ";
-	std::cin >> mirrors;
+	//std::cin >> mirrors;
 
 	if (mirrors < 0)
 	{
@@ -193,8 +192,11 @@ void main()
 				col = RED;
 			}
 
-			DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
-			DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
+			//DrawCube(center, steps[step].side, steps[step].height, steps[step].side, col);
+			//DrawCubeWires(center, steps[step].side, steps[step].height, steps[step].side, WHITE);
+			DrawLine3D(Vector3Zero(), vectorA, RED);
+			DrawLine3D(Vector3Zero(), vectorB, GREEN);
+			DrawLine3D(Vector3Zero(), vectorC, BLUE);
 		}
 
 		EndMode3D();
@@ -283,4 +285,9 @@ void calculateGeometry(const std::vector<Step>& steps)
 	std::cout << "Total perimeter (sum of perimeters of all faces): " << totalPerimeter << " cm" << "\n";
 	std::cout << "Total surface area (sum of areas of all faces): " << totalArea << " cm2" << "\n";
 	std::cout << "Total volume: " << totalVolume << " cm3" << "\n";
+}
+
+float getVectorMagnitude(Vector3 vector)
+{
+	return (sqrt((vector.x * vector.x) + (vector.y * vector.y) + (vector.z * vector.z)));
 }
