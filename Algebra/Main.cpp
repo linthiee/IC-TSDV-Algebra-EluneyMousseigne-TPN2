@@ -8,17 +8,13 @@
 
 struct Step
 {
-	float side;
-	float bottomY;
+	float side; //length of the step
+	float bottomY; //were the base of the step is placed
 	float height;
 	bool inverted;
 };
 
 const int magnitudeRange = 20;
-
-const int minAngle = 1;
-const int maxAngle = 360;
-const int angleRange = (maxAngle - minAngle + 1);
 
 const int screenWidth = 1080;
 const int screenHeight = 625;
@@ -32,7 +28,6 @@ void normalizeVector(Vector3& vector);
 void scaleVector(Vector3& vector, float scalar);
 
 void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step, Color col);
-void fillStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, Color col);
 
 Vector3 operator+(Vector3& vector1, Vector3& vector2);
 
@@ -41,8 +36,6 @@ void main()
 	srand(time(nullptr));
 
 	float currentTopY = 0;
-
-	float angle = rand() % (angleRange + minAngle);
 
 	Camera3D camera = { 0 };
 
@@ -58,6 +51,7 @@ void main()
 
 	float cameraSpeed = 0.2f;
 
+	//get a random magnitude value (random orientation on the x y z axes)
 	vectorA.x = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
 	vectorA.y = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
 	vectorA.z = (float)((rand()) / (float)(RAND_MAX / magnitudeRange)) - (magnitudeRange / 2.0f);
@@ -290,42 +284,51 @@ void scaleVector(Vector3& vector, float scalar)
 
 void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide, float step, Color col)
 {
-	Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step };
+	Vector3 center = { vectorC.x * step, vectorC.y * step, vectorC.z * step }; //center of the step regarding the vector C (to build the pyramid using the vector C orientation)
 
 	Vector3 getNormalizedVectorA = vectorA;
 	normalizeVector(getNormalizedVectorA);
 	scaleVector(getNormalizedVectorA, stepSide);
+	//scaling a copy of the vector A to the current step length
 
 	Vector3 getNormalizedVectorB = vectorB;
 	normalizeVector(getNormalizedVectorB);
 	scaleVector(getNormalizedVectorB, stepSide);
+	//scaling a copy of the vector B to the current step length
 
 	Vector3 corner1 = center - getNormalizedVectorA + getNormalizedVectorB;
 	Vector3 corner2 = center + getNormalizedVectorA + getNormalizedVectorB;
 	Vector3 corner3 = center - getNormalizedVectorA - getNormalizedVectorB;
 	Vector3 corner4 = center + getNormalizedVectorA - getNormalizedVectorB;
+	//getting the corners of the steps regarding the center and the current step
 
 	DrawLine3D(corner3, corner4, MAGENTA);
 	DrawLine3D(corner4, corner2, MAGENTA);
 	DrawLine3D(corner3, corner1, MAGENTA);
 	DrawLine3D(corner1, corner2, MAGENTA);
+	//draw step outline
 
 	DrawLine3D(corner1, corner1 + vectorC, MAGENTA);
 	DrawLine3D(corner2, corner2 + vectorC, MAGENTA);
 	DrawLine3D(corner3, corner3 + vectorC, MAGENTA);
 	DrawLine3D(corner4, corner4 + vectorC, MAGENTA);
+	//draw step conection outline
 
 	DrawSphere(center, 0.1f, MAGENTA);
+	//draw center for guide
 
 	DrawSphere(corner1, 0.1f, GREEN);
 	DrawSphere(corner2, 0.1f, BLUE);
 	DrawSphere(corner3, 0.1f, RED);
 	DrawSphere(corner4, 0.1f, YELLOW);
+	//draw corners for guide
 
 	DrawTriangle3D(corner1, corner2, corner3, col);
 	DrawTriangle3D(corner2, corner4, corner3, col);
+	//fill the first step using triangles
 
 	center = { vectorC.x * (step + 1), vectorC.y * (step + 1), vectorC.z * (step + 1) };
+	//get duplicated step versions 
 
 	Vector3 corner5 = center - getNormalizedVectorA + getNormalizedVectorB;
 	Vector3 corner6 = center + getNormalizedVectorA + getNormalizedVectorB;
@@ -347,10 +350,6 @@ void drawStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, float stepSide,
 	DrawTriangle3D(corner1, corner3, corner5, col);
 	DrawTriangle3D(corner2, corner6, corner4, col);
 	DrawTriangle3D(corner4, corner6, corner8, col);
-}
-
-void fillStep(Vector3 vectorA, Vector3 vectorB, Vector3 vectorC, Color col)
-{
 }
 
 Vector3 operator+(Vector3& vector1, Vector3& vector2)
